@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>ROK</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <style>
+        body {
+            position: relative;
+        }
+        .wrapper {
+            width: 60vw;
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translate(-50%, 0%);
+        }
+        img {
+            width: 100%;
+            height: auto;
+        }
+
+        .banner {
+            padding-bottom: 30px;
+            width: 60vw;
+            position: relative;
+        }
+
+        .name {
+            position: absolute;
+            padding-top: 10px;
+            padding-left: 10px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        table {
+            width: 60vw;
+        }
+        th, td {
+            height: 30px;
+        }
+        .cell {
+            height: 30px;
+            border: none;
+            width: 100%;
+        }
+        .add {
+            height: 100%;
+            width: 100%;
+            border: none;
+            background-color: cornflowerblue;
+            color: white;
+        }
+        .add:hover {
+            cursor: pointer;
+            color: blue;
+        }
+        .edit {
+            height: 100%;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .edit:hover {
+            cursor: pointer;
+            color: cadetblue;
+        }
+        .save {
+            height: 100%;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: forestgreen;
+            color: white;
+        }
+        .save:hover {
+            cursor: pointer;
+            color: green;
+        }
+        .export {
+            margin-top: 30px;
+            height: 30px;
+            background-color: green;
+            color: white;
+            border-color: green;
+            margin-bottom: 30px;
+        }
+        .export:hover {
+            cursor: pointer;
+            font-weight: bolder;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="banner">
+        <div class="name">
+            <h3>Mr.Ken & Mr.Bo</h3>
+        </div>
+        <img src="banner.jpeg" alt="">
+    </div>
+    <table id="data_table">
+        <tr>
+            <th style="display:none;">DB_ID</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Army unit</th>
+            <th>Died</th>
+            <th>Kill point</th>
+        </tr>
+
+        <tr>
+            <td><input class="cell" type="text" id="new_id"></td>
+            <td><input class="cell" type="text" id="new_name"></td>
+            <td><input class="cell" type="text" id="new_sum"></td>
+            <td><input class="cell" type="text" id="new_died"></td>
+            <td><input class="cell" type="text" id="new_score"></td>
+            <td><input type="button" class="add" onclick="add_row();" value=" Add Row "></td>
+        </tr>
+
+    </table>
+    <input type="button" class="export" onclick="fnExcelReport();" value="Export Excel">
+</div>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: "http://localhost:3000/api/get-data",
+            success: function(data, status, xhr){
+                console.log("success: ", data);
+                data.data.forEach(e => {
+                    var new_id=e.ID_rok
+                    var new_name=e.Name_rok
+                    var new_sum=e.Army_unit_rok
+                    var new_died=e.Died_rok
+                    var new_score=e.Kill_point_rok
+
+                    var table=document.getElementById("data_table");
+                    var table_len=(table.rows.length)-1;
+                    var row = table.insertRow(table_len).outerHTML="" +
+                        "<tr id='row"+table_len+"'>" +
+                        "<td id='pk_row"+table_len+"' style=\"display:none;\">"+"<input disabled class=\"cell\" type='text' id='pk_text"+table_len+"' value='"+e.id+"'>"+"</td>" +
+                        "<td id='id_row"+table_len+"'>"+"<input disabled class=\"cell\" type='text' id='id_text"+table_len+"' value='"+new_id+"'>"+"</td>" +
+                        "<td id='name_row"+table_len+"'>"+"<input disabled class=\"cell\" type='text' id='name_text"+table_len+"' value='"+new_name+"'>"+"</td>" +
+                        "<td id='sum_row"+table_len+"'>"+"<input disabled class=\"cell\" type='text' id='sum_text"+table_len+"' value='"+new_sum+"'>"+"</td>" +
+                        "<td id='died_row"+table_len+"'>"+"<input disabled class=\"cell\" type='text' id='died_text"+table_len+"' value='"+new_died+"'>"+"</td>" +
+                        "<td id='score_row"+table_len+"'>"+"<input disabled class=\"cell\" type='text' id='score_text"+table_len+"' value='"+new_score+"'>"+"</td>" +
+                        "<td>" +
+                        "<input type='button' value='Edit' class='edit' id='editBtn" + table_len +"' onclick='edit_row("+table_len+")'>" +
+                        "</td>" +
+                        "</tr>";
+
+                    document.getElementById("new_id").value="";
+                    document.getElementById("new_sum").value="";
+                    document.getElementById("new_name").value="";
+                    document.getElementById("new_died").value="";
+                    document.getElementById("new_score").value="";
+                })
+            },
+            error: function(jqXhr, textStatus, errorMessage) {
+                console.log("errors: ", errorMessage);
+            }
+        })
+    });
+    add_row = () => {
+        var new_id=document.getElementById("new_id").value;
+        var new_name=document.getElementById("new_name").value;
+        var new_sum=document.getElementById("new_sum").value;
+        var new_died=document.getElementById("new_died").value;
+        var new_score=document.getElementById("new_score").value;
+
+        $.ajax({
+            url: "http://localhost:3000/api/post-data",
+            method: "POST",
+            data: {new_id, new_name, new_sum, new_died, new_score},
+            success: function(data, status, xhr){
+                console.log(data)
+                var table=document.getElementById("data_table");
+                var table_len=(table.rows.length)-1;
+                table.insertRow(table_len).outerHTML="" +
+                    "<tr id='row"+table_len+"'>" +
+                    "<td style='display:none;' id='pk_row"+table_len+"'>"+"<input disabled class=\"cell\" id='pk_text"+table_len+"' value='"+data+"'>"+"</td>" +
+                    "<td id='id_row"+table_len+"'>"+"<input disabled class=\"cell\" id='id_text"+table_len+"' value='"+new_id+"'>"+"</td>" +
+                    "<td id='name_row"+table_len+"'>"+"<input disabled class=\"cell\" id='name_text"+table_len+"' value='"+new_name+"'>"+"</td>" +
+                    "<td id='sum_row"+table_len+"'>"+"<input disabled class=\"cell\" id='sum_text"+table_len+"' value='"+new_sum+"'>"+"</td>" +
+                    "<td id='died_row"+table_len+"'>"+"<input disabled class=\"cell\" id='died_text"+table_len+"' value='"+new_died+"'>"+"</td>" +
+                    "<td id='score_row"+table_len+"'>"+"<input disabled class=\"cell\" id='score_text"+table_len+"' value='"+new_score+"'>"+"</td>" +
+                    "<td>" +
+                    "<input type='button' value='Edit' class='edit' id='editBtn" +table_len+ "' onclick='edit_row("+table_len+")'>" +
+                    "</td>" +
+                    "</tr>";
+                document.getElementById("new_id").value="";
+                document.getElementById("new_name").value="";
+                document.getElementById("new_sum").value="";
+                document.getElementById("new_died").value="";
+                document.getElementById("new_score").value="";
+
+            },
+            error: function(jqXhr, textStatus, errorMessage) {
+                console.log("errors save: ", errorMessage);
+            }
+        })
+    }
+    edit_row = (length) => {
+        document.getElementById("editBtn"+length).outerHTML = "<input type='button' value='Save' class='save' id='saveBtn" + length +"' onclick='save_row("+length+")'>"
+        document.getElementById("id_text"+length).disabled = false
+        document.getElementById("name_text"+length).disabled = false
+        document.getElementById("sum_text"+length).disabled = false
+        document.getElementById("died_text"+length).disabled = false
+        document.getElementById("score_text"+length).disabled = false
+    }
+    save_row = (length) => {
+        document.getElementById("saveBtn"+length).outerHTML = "<input type='button' value='Edit' class='edit' id='editBtn" + length +"' onclick='edit_row("+length+")'>"
+        document.getElementById("id_text"+length).disabled = true
+        document.getElementById("name_text"+length).disabled = true
+        document.getElementById("sum_text"+length).disabled = true
+        document.getElementById("died_text"+length).disabled = true
+        document.getElementById("score_text"+length).disabled = true
+
+        var id=document.getElementById("id_text"+length).value;
+        var name=document.getElementById("name_text"+length).value;
+        var sum=document.getElementById("sum_text"+length).value;
+        var new_died=document.getElementById("died_text"+length).value;
+        var new_score=document.getElementById("score_text"+length).value;
+        var pk=document.getElementById("pk_text"+length).value;
+        $.ajax({
+            url: "http://localhost:3000/api/edit-data",
+            method: "POST",
+            data: {id, name, sum, new_died, new_score, pk},
+            success: function(data, status, xhr){
+
+            },
+            error: function(jqXhr, textStatus, errorMessage) {
+                console.log("errors save: ", errorMessage);
+            }
+        })
+    }
+    fnExcelReport = () =>
+    {
+        tab = document.getElementById('data_table'); // id of table
+        const Results = [
+            ["ID", "Name", "Army unit", "Died", "Kill point"]
+        ]
+        for (j = 1; j < tab.rows.length - 1; j++) {
+            if (document.getElementById('id_text' + j)) {
+                Results.push(
+                    [
+                        document.getElementById('id_text' + j).value,
+                        document.getElementById('name_text' + j).value,
+                        document.getElementById('sum_text' + j).value,
+                        document.getElementById('died_text' + j).value,
+                        document.getElementById('score_text' + j).value
+                    ]
+                )
+            }
+        }
+
+        var CsvString = "";
+        Results.forEach(function (RowItem, RowIndex) {
+            RowItem.forEach(function (ColItem, ColIndex) {
+                CsvString += ColItem + ',';
+            });
+            CsvString += "\r\n";
+        });
+        CsvString = "data:application/vnd.ms-excel," + encodeURIComponent(CsvString);
+        var x = document.createElement("A");
+        x.setAttribute("href", CsvString);
+        x.setAttribute("download", "download.xls");
+        document.body.appendChild(x);
+        x.click()
+    }
+
+</script>
+</body>
+</html>
+
