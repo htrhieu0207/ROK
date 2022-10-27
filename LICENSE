@@ -1,16 +1,3 @@
-ajax
-========
-
-Utilities for loading JSON and XML.
-
-Installation
-------------
-
-    $ npm install ajax
-
-License 
--------
-
 Copyright 2011 Joe Hewitt
 
 Licensed under the Apache License, Version 2.0 (the "License");
